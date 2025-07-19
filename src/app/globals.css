@@ -1,26 +1,351 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 255 255 255;
+  --foreground: 10 10 10;
+  --card: 255 255 255;
+  --card-foreground: 10 10 10;
+  --popover: 255 255 255;
+  --popover-foreground: 10 10 10;
+  --primary: 59 130 246;
+  --primary-foreground: 248 250 252;
+  --secondary: 241 245 249;
+  --secondary-foreground: 15 23 42;
+  --muted: 241 245 249;
+  --muted-foreground: 100 116 139;
+  --accent: 241 245 249;
+  --accent-foreground: 15 23 42;
+  --destructive: 239 68 68;
+  --destructive-foreground: 248 250 252;
+  --border: 226 232 240;
+  --input: 226 232 240;
+  --ring: 59 130 246;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: 15 15 20;
+  --foreground: 248 250 252;
+  --card: 20 20 30;
+  --card-foreground: 248 250 252;
+  --popover: 20 20 30;
+  --popover-foreground: 248 250 252;
+  --primary: 59 130 246;
+  --primary-foreground: 248 250 252;
+  --secondary: 30 41 59;
+  --secondary-foreground: 248 250 252;
+  --muted: 30 41 59;
+  --muted-foreground: 148 163 184;
+  --accent: 30 41 59;
+  --accent-foreground: 248 250 252;
+  --destructive: 220 38 38;
+  --destructive-foreground: 248 250 252;
+  --border: 30 41 59;
+  --input: 30 41 59;
+  --ring: 59 130 246;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: rgb(var(--background));
+  --color-foreground: rgb(var(--foreground));
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Enhanced typography */
+.font-display {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.font-body {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+  font-weight: 400;
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* Performance optimizations for 3D transforms */
+.phone-3d-container {
+  will-change: transform;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+.phone-3d-element {
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  /* Force hardware acceleration */
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+}
+
+/* Optimize animations for 60fps */
+.phone-animation {
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, opacity;
+}
+
+/* 3D Transform utilities for Nothing Phone */
+.preserve-3d {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+}
+
+/* Enhanced glass morphism effects for Nothing Phone back */
+.glass-effect {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Performance optimization */
+  will-change: backdrop-filter;
+  transform: translateZ(0);
+}
+
+.glass-texture {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.03) 75%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  mix-blend-mode: overlay;
+}
+
+/* Enhanced LED glow effects with performance */
+.led-glow {
+  filter: drop-shadow(0 0 10px currentColor);
+  animation: pulse-glow 2s ease-in-out infinite alternate;
+  will-change: filter;
+}
+
+.led-strip {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.8) 50%, 
+    transparent 100%
+  );
+  animation: led-flow 3s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+@keyframes pulse-glow {
+  from {
+    filter: drop-shadow(0 0 5px currentColor);
+  }
+  to {
+    filter: drop-shadow(0 0 20px currentColor);
   }
 }
 
+@keyframes led-flow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scaleX(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1.2);
+  }
+}
+
+/* Motion blur for rotation transitions */
+.motion-blur {
+  filter: blur(0px);
+  transition: filter 0.3s ease;
+}
+
+.motion-blur.rotating {
+  filter: blur(1px);
+}
+
+/* Enhanced scroll behavior for 3D experience */
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+/* Optimize scrolling performance */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgb(var(--background));
+  color: rgb(var(--foreground));
+  font-family: var(--font-sans);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  /* Prevent layout shifts during animations */
+  overflow-anchor: none;
+  /* Better text rendering */
+  text-rendering: optimizeLegibility;
+}
+
+/* Custom scrollbar with improved styling */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(var(--muted));
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--muted-foreground) / 0.3);
+  border-radius: 6px;
+  transition: background 0.2s;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--muted-foreground) / 0.5);
+  background-clip: content-box;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: rgb(30 41 59);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgb(100 116 139 / 0.5);
+  background-clip: content-box;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgb(148 163 184 / 0.5);
+  background-clip: content-box;
+}
+
+/* Enhanced focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid rgb(var(--primary));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Gradient backgrounds for dark mode */
+.gradient-to-br {
+  background: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+/* Enhanced text utilities */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Improved glow effects */
+.glow {
+  filter: drop-shadow(0 0 20px rgb(var(--primary) / 0.3));
+}
+
+.dark .glow {
+  filter: drop-shadow(0 0 20px rgb(var(--primary) / 0.5));
+}
+
+/* Enhanced blob animation */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Enhanced button styles */
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5 active:scale-95;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 px-8 py-3 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5 active:scale-95;
+}
+
+/* Enhanced card styles */
+.card {
+  @apply bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 transition-all duration-200 hover:shadow-xl hover:border-gray-300 dark:hover:border-gray-600;
+}
+
+/* Improved gradient backgrounds */
+.gradient-hero {
+  background: linear-gradient(135deg, 
+    rgb(var(--background)) 0%, 
+    rgb(var(--muted) / 0.3) 50%, 
+    rgb(var(--background)) 100%
+  );
+}
+
+.dark .gradient-hero {
+  background: linear-gradient(135deg, 
+    rgb(var(--background)) 0%, 
+    rgb(var(--muted) / 0.2) 50%, 
+    rgb(var(--background)) 100%
+  );
 }
