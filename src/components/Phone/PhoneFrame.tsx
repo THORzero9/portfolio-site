@@ -98,98 +98,52 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
     return () => window.removeEventListener('resize', updateScale);
   }, []);
 
-  // Enhanced GSAP animations - Scale the phone asset directly!
+  // Simplified GSAP animations - CSS handles scaling, GSAP handles positioning
   useEffect(() => {
     if (!phoneContainerRef.current) return;
 
-    // For back view, scale the phone asset directly instead of the container
-    if (phoneState === 'backView') {
-      const currentScale = getBackViewScale();
-      const currentOpacity = 1;
-      const currentRotationY = 0;
-      const currentZ = -200;
+    const currentOpacity = phoneState === 'disappearing' ? (progress > 0.95 ? 0 : 1) : 1;
+    const currentRotationY = (phoneState === 'immersive' || phoneState === 'flippingBack') ? 180 : 0;
+    const currentZ = phoneState === 'backView' ? -200 :
+                     phoneState === 'flipping' || phoneState === 'flippingBack' ? 0 :
+                     phoneState === 'immersive' ? 50 :
+                     phoneState === 'disappearing' ? -500 : -200;
 
-      gsap.to(phoneContainerRef.current, {
-        scale: 1, // Keep container at normal scale
-        opacity: currentOpacity,
-        rotationY: currentRotationY,
-        z: currentZ,
-        duration: 1.8,
-        ease: 'power1.inOut',
-        transformOrigin: 'center center',
-        transformStyle: 'preserve-3d',
-        force3D: true
-      });
-
-      // Scale the phone asset directly!
-      if (backViewRef.current) {
-        const backImageDiv = backViewRef.current.querySelector('.phone-image');
-        if (backImageDiv) {
-          gsap.to(backImageDiv, {
-            scale: currentScale, // Apply the dramatic zoom directly to the asset
-            duration: 1.8,
-            ease: 'power1.inOut',
-            force3D: true,
-            transformOrigin: 'center center'
-          });
-        }
-      }
-    } else {
-      // For other states, use normal container scaling
-      const currentScale = phoneState === 'flipping' ? responsiveScale * 0.9 :
+    // For back view, keep container at normal scale (CSS handles image scaling)
+    const containerScale = phoneState === 'backView' ? 1 :
+                          phoneState === 'flipping' ? responsiveScale * 0.9 :
                           phoneState === 'immersive' ? responsiveScale :
                           phoneState === 'flippingBack' ? responsiveScale * 0.9 :
                           phoneState === 'disappearing' ? getDisappearingScale() : 1;
 
-      const currentOpacity = phoneState === 'disappearing' ? (progress > 0.95 ? 0 : 1) : 1;
-      const currentRotationY = (phoneState === 'immersive' || phoneState === 'flippingBack') ? 180 : 0;
-      const currentZ = phoneState === 'flipping' || phoneState === 'flippingBack' ? 0 :
-                       phoneState === 'immersive' ? 50 :
-                       phoneState === 'disappearing' ? -500 : -200;
+    const easing = phoneState === 'flipping' || phoneState === 'flippingBack' ? 'power2.inOut' :
+                   phoneState === 'immersive' ? 'back.out(1.1)' :
+                   phoneState === 'disappearing' ? 'power2.in' : 'power1.inOut';
 
-      const easing = phoneState === 'flipping' || phoneState === 'flippingBack' ? 'power2.inOut' :
-                     phoneState === 'immersive' ? 'back.out(1.1)' :
-                     phoneState === 'disappearing' ? 'power2.in' : 'power1.inOut';
+    const duration = phoneState === 'flipping' || phoneState === 'flippingBack' ? 1.0 : 
+                     phoneState === 'immersive' ? 1.8 :
+                     phoneState === 'disappearing' ? 1.2 : 1.8;
 
-      const duration = phoneState === 'flipping' || phoneState === 'flippingBack' ? 1.0 : 
-                       phoneState === 'immersive' ? 1.8 :
-                       phoneState === 'disappearing' ? 1.2 : 1.8;
-
-      gsap.to(phoneContainerRef.current, {
-        scale: currentScale,
-        opacity: currentOpacity,
-        rotationY: currentRotationY,
-        z: currentZ,
-        duration,
-        ease: easing,
-        transformOrigin: 'center center',
-        transformStyle: 'preserve-3d',
-        force3D: true,
-        onComplete: () => {
-          if (phoneContainerRef.current) {
-            phoneContainerRef.current.style.transformStyle = phoneState === 'immersive' ? 'flat' : 'preserve-3d';
-            phoneContainerRef.current.style.pointerEvents = 'auto';
-            if (phoneState === 'immersive') {
-              phoneContainerRef.current.style.willChange = 'auto';
-            }
+    gsap.to(phoneContainerRef.current, {
+      scale: containerScale,
+      opacity: currentOpacity,
+      rotationY: currentRotationY,
+      z: currentZ,
+      duration,
+      ease: easing,
+      transformOrigin: 'center center',
+      transformStyle: 'preserve-3d',
+      force3D: true,
+      onComplete: () => {
+        if (phoneContainerRef.current) {
+          phoneContainerRef.current.style.transformStyle = phoneState === 'immersive' ? 'flat' : 'preserve-3d';
+          phoneContainerRef.current.style.pointerEvents = 'auto';
+          if (phoneState === 'immersive') {
+            phoneContainerRef.current.style.willChange = 'auto';
           }
         }
-      });
-
-      // Reset phone asset scale for other states
-      if (backViewRef.current) {
-        const backImageDiv = backViewRef.current.querySelector('.phone-image');
-        if (backImageDiv) {
-          gsap.to(backImageDiv, {
-            scale: 1,
-            duration: 0.6,
-            ease: 'power1.inOut',
-            force3D: true,
-            transformOrigin: 'center center'
-          });
-        }
       }
-    }
+    });
   }, [phoneState, progress, responsiveScale]);
 
   // Opacity-based visibility control - backup for smooth transitions
@@ -318,8 +272,9 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
               backgroundSize: 'contain',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
-              transform: 'scale(1)',
-              willChange: 'transform'
+              transform: `scale(${phoneState === 'backView' ? getBackViewScale() : 1})`,
+              willChange: 'transform',
+              transition: phoneState === 'backView' ? 'transform 0.3s ease-out' : 'none'
             }}
           />
         </div>
