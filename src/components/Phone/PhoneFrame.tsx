@@ -98,37 +98,64 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
     return () => window.removeEventListener('resize', updateScale);
   }, []);
 
-  // Enhanced GSAP animations for smooth phone state changes with 3D rotation
+  // Enhanced GSAP animations - Scale the phone asset directly!
   useEffect(() => {
     if (!phoneContainerRef.current) return;
 
-    const currentScale = phoneState === 'backView' ? getBackViewScale() :
-                        phoneState === 'flipping' ? responsiveScale * 0.9 :
-                        phoneState === 'immersive' ? responsiveScale :
-                        phoneState === 'flippingBack' ? responsiveScale * 0.9 :
-                        phoneState === 'disappearing' ? getDisappearingScale() : getBackViewScale();
+    // For back view, scale the phone asset directly instead of the container
+    if (phoneState === 'backView') {
+      const currentScale = getBackViewScale();
+      const currentOpacity = 1;
+      const currentRotationY = 0;
+      const currentZ = -200;
 
-    const currentOpacity = phoneState === 'disappearing' ? (progress > 0.95 ? 0 : 1) : 1;
+      gsap.to(phoneContainerRef.current, {
+        scale: 1, // Keep container at normal scale
+        opacity: currentOpacity,
+        rotationY: currentRotationY,
+        z: currentZ,
+        duration: 1.8,
+        ease: 'power1.inOut',
+        transformOrigin: 'center center',
+        transformStyle: 'preserve-3d',
+        force3D: true
+      });
 
-    // Clean rotation logic - back at 0°, front at 180°
-    const currentRotationY = (phoneState === 'immersive' || phoneState === 'flippingBack') ? 180 : 0;
+      // Scale the phone asset directly!
+      if (backViewRef.current) {
+        const backImageDiv = backViewRef.current.querySelector('.phone-image');
+        if (backImageDiv) {
+          gsap.to(backImageDiv, {
+            scale: currentScale, // Apply the dramatic zoom directly to the asset
+            duration: 1.8,
+            ease: 'power1.inOut',
+            force3D: true,
+            transformOrigin: 'center center'
+          });
+        }
+      }
+    } else {
+      // For other states, use normal container scaling
+      const currentScale = phoneState === 'flipping' ? responsiveScale * 0.9 :
+                          phoneState === 'immersive' ? responsiveScale :
+                          phoneState === 'flippingBack' ? responsiveScale * 0.9 :
+                          phoneState === 'disappearing' ? getDisappearingScale() : 1;
 
-    const currentZ = phoneState === 'backView' ? -200 :
-                     phoneState === 'flipping' || phoneState === 'flippingBack' ? 0 :
-                     phoneState === 'immersive' ? 50 :
-                     phoneState === 'disappearing' ? -500 : -200;
+      const currentOpacity = phoneState === 'disappearing' ? (progress > 0.95 ? 0 : 1) : 1;
+      const currentRotationY = (phoneState === 'immersive' || phoneState === 'flippingBack') ? 180 : 0;
+      const currentZ = phoneState === 'flipping' || phoneState === 'flippingBack' ? 0 :
+                       phoneState === 'immersive' ? 50 :
+                       phoneState === 'disappearing' ? -500 : -200;
 
-    // Use different easing based on phone state for smoother transitions
-    const easing = phoneState === 'backView' ? 'power1.inOut' :
-                   phoneState === 'flipping' || phoneState === 'flippingBack' ? 'power2.inOut' :
-                   phoneState === 'immersive' ? 'back.out(1.1)' :
-                   phoneState === 'disappearing' ? 'power2.in' : 'power1.inOut';
+      const easing = phoneState === 'flipping' || phoneState === 'flippingBack' ? 'power2.inOut' :
+                     phoneState === 'immersive' ? 'back.out(1.1)' :
+                     phoneState === 'disappearing' ? 'power2.in' : 'power1.inOut';
 
-    const duration = phoneState === 'flipping' || phoneState === 'flippingBack' ? 1.0 : 
-                     phoneState === 'immersive' ? 1.8 :
-                     phoneState === 'disappearing' ? 1.2 : 1.8;
+      const duration = phoneState === 'flipping' || phoneState === 'flippingBack' ? 1.0 : 
+                       phoneState === 'immersive' ? 1.8 :
+                       phoneState === 'disappearing' ? 1.2 : 1.8;
 
-          gsap.to(phoneContainerRef.current, {
+      gsap.to(phoneContainerRef.current, {
         scale: currentScale,
         opacity: currentOpacity,
         rotationY: currentRotationY,
@@ -138,14 +165,10 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
         transformOrigin: 'center center',
         transformStyle: 'preserve-3d',
         force3D: true,
-        // Explicitly disable 3D context for child elements during scroll-critical states
         onComplete: () => {
           if (phoneContainerRef.current) {
-            // Always set to flat when in immersive to enable scrolling
             phoneContainerRef.current.style.transformStyle = phoneState === 'immersive' ? 'flat' : 'preserve-3d';
             phoneContainerRef.current.style.pointerEvents = 'auto';
-            
-            // Remove any transforms that might interfere with scrolling in immersive mode
             if (phoneState === 'immersive') {
               phoneContainerRef.current.style.willChange = 'auto';
             }
@@ -153,31 +176,20 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
         }
       });
 
-      // Also animate the background image for better scaling effect
+      // Reset phone asset scale for other states
       if (backViewRef.current) {
         const backImageDiv = backViewRef.current.querySelector('.phone-image');
         if (backImageDiv) {
-          // Calculate image scale based on phone state and progress
-          let imageScale = 1;
-          if (phoneState === 'backView') {
-            // Dramatic zoom for the image itself
-            if (progress < 0.10) imageScale = 1;
-            else if (progress > 0.45) imageScale = 1.8;
-            else {
-              const zoomProgress = (progress - 0.10) / (0.45 - 0.10);
-              const easedProgress = zoomProgress * zoomProgress;
-              imageScale = 1 + (easedProgress * 0.8); // 1 → 1.8
-            }
-          }
-          
-          gsap.set(backImageDiv, {
-            scale: imageScale,
+          gsap.to(backImageDiv, {
+            scale: 1,
+            duration: 0.6,
+            ease: 'power1.inOut',
             force3D: true,
-            transformOrigin: 'center center',
-            immediateRender: true
+            transformOrigin: 'center center'
           });
         }
       }
+    }
   }, [phoneState, progress, responsiveScale]);
 
   // Opacity-based visibility control - backup for smooth transitions
