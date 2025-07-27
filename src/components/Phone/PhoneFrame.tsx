@@ -153,16 +153,28 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
         }
       });
 
-      // Also animate the image inside for better scaling effect
+      // Also animate the background image for better scaling effect
       if (backViewRef.current) {
-        const backImage = backViewRef.current.querySelector('img');
-        if (backImage) {
-          gsap.to(backImage, {
-            scale: phoneState === 'backView' ? 1 + (progress * 0.1) : 1,
-            duration: 0.3,
-            ease: 'power1.inOut',
+        const backImageDiv = backViewRef.current.querySelector('.phone-image');
+        if (backImageDiv) {
+          // Calculate image scale based on phone state and progress
+          let imageScale = 1;
+          if (phoneState === 'backView') {
+            // Dramatic zoom for the image itself
+            if (progress < 0.10) imageScale = 1;
+            else if (progress > 0.45) imageScale = 1.8;
+            else {
+              const zoomProgress = (progress - 0.10) / (0.45 - 0.10);
+              const easedProgress = zoomProgress * zoomProgress;
+              imageScale = 1 + (easedProgress * 0.8); // 1 → 1.8
+            }
+          }
+          
+          gsap.set(backImageDiv, {
+            scale: imageScale,
             force3D: true,
-            transformOrigin: 'center center'
+            transformOrigin: 'center center',
+            immediateRender: true
           });
         }
       }
@@ -286,20 +298,18 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
           }}
         >
           {/* Authentic Nothing Phone 2a Back Image */}
-          <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-2xl" style={{ transformOrigin: 'center center' }}>
-            {/* Background image - authentic Nothing Phone 2a back */}
-            <img 
-              src="/assets/images/phone-2a-back.png"
-              alt="Nothing Phone 2a Back"
-              className="absolute inset-0 w-full h-full object-contain object-center rounded-[2.5rem] phone-image"
-              style={{ 
-                imageRendering: 'crisp-edges',
-                transform: 'scale(1)',
-                transformOrigin: 'center center',
-                willChange: 'transform'
-              }}
-            />
-          </div>
+          <div 
+            className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-2xl phone-image" 
+            style={{ 
+              transformOrigin: 'center center',
+              backgroundImage: 'url(/assets/images/phone-2a-back.png)',
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              transform: 'scale(1)',
+              willChange: 'transform'
+            }}
+          />
         </div>
 
         {/* Nothing Phone 2a FRONT VIEW */}
