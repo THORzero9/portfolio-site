@@ -29,6 +29,9 @@ export const useScrollProgress = () => {
   const PHASE_5_END = 0.90;      // Complete flip to back (kept same)
   const PHASE_6_START = 0.90;    // Phone disappears slowly - NO GAP!
 
+  // Enhanced mobile scroll support - ensure smooth progression
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+
   // Optimized scroll calculation with RAF
   const calculateProgress = useCallback(() => {
       const scrollTop = window.scrollY;
@@ -73,22 +76,15 @@ export const useScrollProgress = () => {
         }
 
     if (scrollProgress >= PHASE_3_END && scrollProgress < PHASE_4_END) {
-      // Phase 4: Immersive phone content experience
+      // Phase 4: Immersive phone content experience - Single scroll controlled
         if (phoneState !== 'immersive') {
           setPhoneState('immersive');
         setIsImmersive(true);
         }
         
-      // Update current section based on progress within immersive phase (About → Projects → Tech Stack)
-        const immersiveProgress = (scrollProgress - PHASE_3_END) / (PHASE_4_END - PHASE_3_END);
-      
-      if (immersiveProgress < 0.33) {
-        setCurrentSection('about');
-      } else if (immersiveProgress < 0.66) {
-        setCurrentSection('projects');
-      } else {
-        setCurrentSection('tech-stack');
-        }
+      // Single scroll: Content progression is now handled by CSS transforms
+      // Keep current section as 'about' for the immersive phase
+      setCurrentSection('about');
       return;
     }
 

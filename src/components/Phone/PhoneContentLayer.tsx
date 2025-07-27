@@ -7,10 +7,18 @@ import { PORTFOLIO_CONFIG } from '@/lib/constants';
 export const PhoneContentLayer: React.FC = () => {
   const { currentSection, phoneState, progress, setPhoneContentActive } = useScrollContext();
 
-  // Only show content when phone is in immersive state (clean timing)
+  // Show content during immersive state - but now it's controlled by main scroll
   if (phoneState !== 'immersive') {
     return null;
   }
+
+  // Calculate immersive progress for content positioning
+  const PHASE_3_END = 0.52;  // Start of immersive
+  const PHASE_4_END = 0.82;  // End of immersive
+  const immersiveProgress = (progress - PHASE_3_END) / (PHASE_4_END - PHASE_3_END);
+  
+  // Calculate content offset based on main scroll progress
+  const contentOffset = immersiveProgress * 100; // 0% to 100% of content
 
   return (
     <div 
@@ -50,20 +58,49 @@ export const PhoneContentLayer: React.FC = () => {
         >
           {/* Scaled content - edge-to-edge backgrounds, padded text */}
           <div 
-            className="w-full h-full"
+            className="w-full h-full relative overflow-hidden"
             style={{
               transform: 'scale(0.85)', // Scale down content to fit comfortably
               transformOrigin: 'top left',
               width: '117.6%', // Compensate for scale reduction (100/0.85)
               height: '117.6%' // Compensate for scale reduction (100/0.85)
-              // No padding here - let backgrounds run edge-to-edge
             }}
           >
-            <PhoneScreen 
-              currentSection={currentSection} 
-              progress={progress}
-              phoneState={phoneState}
-            />
+            {/* Single-scroll content container */}
+            <div 
+              className="w-full transition-transform duration-300 ease-out"
+              style={{
+                transform: `translateY(-${contentOffset}%)`,
+                height: '300%' // 3x height to accommodate all sections
+              }}
+            >
+              {/* About Section */}
+              <div className="h-full">
+                <PhoneScreen 
+                  currentSection="about"
+                  progress={progress}
+                  phoneState={phoneState}
+                />
+              </div>
+              
+              {/* Projects Section */}
+              <div className="h-full">
+                <PhoneScreen 
+                  currentSection="projects"
+                  progress={progress}
+                  phoneState={phoneState}
+                />
+              </div>
+              
+              {/* Tech Stack Section */}
+              <div className="h-full">
+                <PhoneScreen 
+                  currentSection="tech-stack"
+                  progress={progress}
+                  phoneState={phoneState}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
