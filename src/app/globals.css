@@ -299,20 +299,61 @@ body {
 @keyframes blob {
   0% {
     transform: translate(0px, 0px) scale(1);
+    -webkit-transform: translate(0px, 0px) scale(1);
   }
   33% {
     transform: translate(30px, -50px) scale(1.1);
+    -webkit-transform: translate(30px, -50px) scale(1.1);
   }
   66% {
     transform: translate(-20px, 20px) scale(0.9);
+    -webkit-transform: translate(-20px, 20px) scale(0.9);
   }
   100% {
     transform: translate(0px, 0px) scale(1);
+    -webkit-transform: translate(0px, 0px) scale(1);
   }
 }
 
 .animate-blob {
   animation: blob 7s infinite;
+  -webkit-animation: blob 7s infinite;
+}
+
+/* Production-optimized transform classes for background elements */
+.transform-gpu {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.scale-animation {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+}
+
+/* Enhanced floating shapes with production optimizations */
+.floating-shape {
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+/* Production-safe GSAP transform classes */
+.gsap-transform {
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .animation-delay-2000 {

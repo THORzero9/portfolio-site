@@ -25,6 +25,18 @@ export const HeroSection: React.FC = () => {
   const { progress, phoneState } = useScrollContext();
 
   useEffect(() => {
+    // Initialize background shapes for production-safe animations
+    const shapes = [floatingShape1Ref.current, floatingShape2Ref.current, floatingShape3Ref.current];
+    shapes.forEach(shape => {
+      if (shape) {
+        gsap.set(shape, {
+          transformOrigin: 'center center',
+          force3D: true,
+          willChange: 'transform, opacity'
+        });
+      }
+    });
+
     // Initial entrance animations with stagger - new order
     const tl = gsap.timeline();
     
@@ -62,7 +74,7 @@ export const HeroSection: React.FC = () => {
       ease: 'sine.inOut'
     });
 
-    // Continuous floating for background shapes
+    // Continuous floating for background shapes with production-safe transforms
     if (floatingShape1Ref.current) {
       gsap.to(floatingShape1Ref.current, {
         y: -15,
@@ -71,7 +83,9 @@ export const HeroSection: React.FC = () => {
         duration: 4,
         repeat: -1,
         yoyo: true,
-        ease: 'sine.inOut'
+        ease: 'sine.inOut',
+        force3D: true,
+        transformOrigin: 'center center'
       });
     }
 
@@ -84,7 +98,9 @@ export const HeroSection: React.FC = () => {
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut',
-        delay: 1
+        delay: 1,
+        force3D: true,
+        transformOrigin: 'center center'
       });
     }
 
@@ -97,7 +113,9 @@ export const HeroSection: React.FC = () => {
         repeat: -1,
         yoyo: true,
         ease: 'sine.inOut',
-        delay: 2
+        delay: 2,
+        force3D: true,
+        transformOrigin: 'center center'
       });
     }
 
@@ -143,7 +161,7 @@ export const HeroSection: React.FC = () => {
       ease: 'none'
     });
 
-    // Apply different parallax speeds to background shapes
+    // Apply different parallax speeds to background shapes with production-safe transforms
     if (floatingShape1Ref.current) {
       gsap.to(floatingShape1Ref.current, {
         y: -progress * 80 * parallaxIntensity + depthShift,
@@ -152,7 +170,9 @@ export const HeroSection: React.FC = () => {
         scale: 1 - progress * 0.1,
         opacity: Math.max(0.1, 1 - progress * 0.7),
         duration: 0.3,
-        ease: 'none'
+        ease: 'none',
+        force3D: true,
+        transformOrigin: 'center center'
       });
     }
 
@@ -164,7 +184,9 @@ export const HeroSection: React.FC = () => {
         scale: 1 - progress * 0.15,
         opacity: Math.max(0.1, 1 - progress * 0.8),
         duration: 0.3,
-        ease: 'none'
+        ease: 'none',
+        force3D: true,
+        transformOrigin: 'center center'
       });
     }
 
@@ -176,7 +198,9 @@ export const HeroSection: React.FC = () => {
         scale: 1 - progress * 0.2,
         opacity: Math.max(0.1, 1 - progress * 0.9),
         duration: 0.3,
-        ease: 'none'
+        ease: 'none',
+        force3D: true,
+        transformOrigin: 'center center'
       });
     }
 
@@ -258,19 +282,19 @@ export const HeroSection: React.FC = () => {
         {/* Floating Shape 1 */}
         <div 
           ref={floatingShape1Ref}
-          className="absolute top-20 left-10 w-32 h-32 rounded-full bg-gradient-to-br from-blue-200/30 to-purple-200/30 dark:from-blue-800/20 dark:to-purple-800/20 blur-sm"
+          className="absolute top-20 left-10 w-32 h-32 rounded-full bg-gradient-to-br from-blue-200/30 to-purple-200/30 dark:from-blue-800/20 dark:to-purple-800/20 blur-sm floating-shape transform-gpu"
         />
         
         {/* Floating Shape 2 */}
         <div 
           ref={floatingShape2Ref}
-          className="absolute top-40 right-20 w-24 h-24 rounded-full bg-gradient-to-br from-purple-200/40 to-pink-200/40 dark:from-purple-800/30 dark:to-pink-800/30 blur-sm"
+          className="absolute top-40 right-20 w-24 h-24 rounded-full bg-gradient-to-br from-purple-200/40 to-pink-200/40 dark:from-purple-800/30 dark:to-pink-800/30 blur-sm floating-shape transform-gpu"
         />
         
         {/* Floating Shape 3 */}
         <div 
           ref={floatingShape3Ref}
-          className="absolute bottom-40 left-1/3 w-20 h-20 rounded-full bg-gradient-to-br from-blue-300/30 to-cyan-300/30 dark:from-blue-700/20 dark:to-cyan-700/20 blur-sm"
+          className="absolute bottom-40 left-1/3 w-20 h-20 rounded-full bg-gradient-to-br from-blue-300/30 to-cyan-300/30 dark:from-blue-700/20 dark:to-cyan-700/20 blur-sm floating-shape transform-gpu"
         />
 
         {/* Subtle grid pattern */}
