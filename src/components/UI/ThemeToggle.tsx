@@ -10,16 +10,12 @@ export const ThemeToggle: React.FC = () => {
 
   useEffect(() => {
     setMounted(true);
-    console.log('ThemeToggle mounted, current theme:', theme);
   }, []);
 
-  useEffect(() => {
-    console.log('Theme changed to:', theme);
-  }, [theme]);
+
 
   const handleClick = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
-    console.log('Theme toggle clicked:', { currentTheme: theme, newTheme });
     setTheme(newTheme);
   };
 

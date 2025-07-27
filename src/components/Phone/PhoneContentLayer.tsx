@@ -5,42 +5,31 @@ import { useScrollContext } from '@/providers/ScrollProvider';
 import { PORTFOLIO_CONFIG } from '@/lib/constants';
 
 export const PhoneContentLayer: React.FC = () => {
-  const { currentSection, phoneState, progress, setPhoneContentActive } = useScrollContext();
+  const { currentSection, phoneState, progress } = useScrollContext();
 
   // Show content during immersive state - but now it's controlled by main scroll
   if (phoneState !== 'immersive') {
     return null;
   }
 
-  // Calculate immersive progress for content positioning
-  const PHASE_3_END = 0.25;  // Start of immersive
-  const PHASE_4_END = 0.80;  // End of immersive
-  const immersiveProgress = (progress - PHASE_3_END) / (PHASE_4_END - PHASE_3_END);
-  
-  // Calculate content offset based on main scroll progress
-  // Add initial offset to prevent clipping at the beginning
-  const contentOffset = Math.max(0, immersiveProgress * 100); // 0% to 100% of content
+
 
   return (
     <div 
-      className="fixed inset-0 z-[99] flex items-center justify-center pointer-events-none"
+      className="fixed inset-0 z-[99] flex items-center justify-center"
       style={{
         // Position behind the phone visual frame
         transform: 'translateZ(-1px)' // Slightly behind to ensure frame is on top
       }}
     >
       <div 
-        className="relative pointer-events-auto"
+        className="relative"
         style={{
           width: PORTFOLIO_CONFIG.phone.width,
           height: PORTFOLIO_CONFIG.phone.height,
           transform: 'scale(1.2)', // Match the visual phone scale during immersive
           transformOrigin: 'center center'
         }}
-        onMouseEnter={() => setPhoneContentActive(true)}
-        onMouseLeave={() => setPhoneContentActive(false)}
-        onFocus={() => setPhoneContentActive(true)}
-        onBlur={() => setPhoneContentActive(false)}
       >
         {/* Content area with precise positioning */}
         <div 
@@ -54,7 +43,8 @@ export const PhoneContentLayer: React.FC = () => {
             width: 'calc(100% - 30px)',  // Width accounting for side spacing (15px + 15px)
             height: 'calc(100% - 36px)', // Height accounting for top/bottom spacing (18px + 18px)
             borderRadius: '42px', // The radius that worked perfectly
-            background: 'transparent'
+            background: 'transparent',
+            pointerEvents: 'auto' // Allow pointer events for scrolling
           }}
         >
           {/* Scaled content - edge-to-edge backgrounds, padded text */}
@@ -67,37 +57,16 @@ export const PhoneContentLayer: React.FC = () => {
               height: '117.6%' // Compensate for scale reduction (100/0.85)
             }}
           >
-            {/* Single-scroll content container */}
+            {/* Single section container */}
             <div 
-              className="w-full transition-transform duration-300 ease-out"
-              style={{
-                transform: `translateY(-${contentOffset}%)`,
-                height: '300%', // 3x height for 3 sections
-                paddingTop: '5%' // Reduced padding since we have more scroll space
-              }}
+              className="w-full h-full"
             >
-              {/* About Section */}
-              <div className="h-full">
-                <PhoneScreen 
-                  currentSection="about"
-                  progress={progress}
-                  phoneState={phoneState}
-                />
-              </div>
               
-              {/* Projects Section */}
-              <div className="h-full">
+
+                          {/* Single Section Display - Only show current section */}
+            <div className="h-full relative flex items-center justify-center">
                 <PhoneScreen 
-                  currentSection="projects"
-                  progress={progress}
-                  phoneState={phoneState}
-                />
-              </div>
-              
-              {/* Tech Stack Section */}
-              <div className="h-full">
-                <PhoneScreen 
-                  currentSection="tech-stack"
+                  currentSection={currentSection}
                   progress={progress}
                   phoneState={phoneState}
                 />

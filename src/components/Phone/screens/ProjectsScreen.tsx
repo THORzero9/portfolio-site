@@ -11,8 +11,26 @@ interface ProjectsScreenProps {
 
 export const ProjectsScreen: React.FC<ProjectsScreenProps> = ({ progress }) => {
   const getCurrentProject = () => {
-    // Calculate which project to show based on scroll progress
-    const projectIndex = Math.floor(progress * PROJECTS.length * 2) % PROJECTS.length;
+    // Calculate progress within the Projects section specifically
+    // Projects section runs from 0.25 to 0.50 of immersive phase
+    const projectsStart = 0.25;
+    const projectsEnd = 0.50;
+    
+    // Normalize progress to 0-1 range for Projects section
+    const projectsProgress = Math.max(0, Math.min(1, (progress - projectsStart) / (projectsEnd - projectsStart)));
+    
+    // Map to project index - make first project appear earlier
+    let projectIndex = 0;
+    if (projectsProgress < 0.6) {
+      projectIndex = 0; // Aura App - much more space
+    } else if (projectsProgress < 0.8) {
+      projectIndex = 1; // Fresh Save
+    } else {
+      projectIndex = 2; // Toolshare App
+    }
+    
+
+    
     return PROJECTS[projectIndex];
   };
 
@@ -27,7 +45,6 @@ export const ProjectsScreen: React.FC<ProjectsScreenProps> = ({ progress }) => {
       {/* Header */}
       <div className="bg-black/20 px-4 py-4 backdrop-blur-sm">
         <h2 className="font-display text-white text-lg font-semibold tracking-wide">Projects</h2>
-        <p className="font-body text-gray-300 text-sm">Swipe to explore</p>
       </div>
 
       {/* Project Demo Area */}

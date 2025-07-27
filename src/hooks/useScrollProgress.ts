@@ -44,6 +44,8 @@ export const useScrollProgress = () => {
     
       setProgress(scrollProgress);
 
+
+
     // Optimized state management with early returns
       if (scrollProgress < PHASE_1_END) {
         // Phase 1: Hero section - phone hidden
@@ -82,9 +84,18 @@ export const useScrollProgress = () => {
         setIsImmersive(true);
         }
         
-      // Single scroll: Content progression is now handled by CSS transforms
-      // Keep current section as 'about' for the immersive phase
-      setCurrentSection('about');
+      // Calculate which section should be visible based on immersive progress
+      const immersiveProgress = (scrollProgress - PHASE_3_END) / (PHASE_4_END - PHASE_3_END);
+      
+      // Give more space to Tech Stack section for better scrolling
+      if (immersiveProgress < 0.25) {
+        setCurrentSection('about');
+      } else if (immersiveProgress < 0.50) {
+        setCurrentSection('projects');
+      } else {
+        setCurrentSection('tech-stack');
+      }
+      
       return;
     }
 
