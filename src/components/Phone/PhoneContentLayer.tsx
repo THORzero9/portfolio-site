@@ -13,12 +13,13 @@ export const PhoneContentLayer: React.FC = () => {
   }
 
   // Calculate immersive progress for content positioning
-  const PHASE_3_END = 0.52;  // Start of immersive
-  const PHASE_4_END = 0.82;  // End of immersive
+  const PHASE_3_END = 0.45;  // Start of immersive
+  const PHASE_4_END = 0.75;  // End of immersive
   const immersiveProgress = (progress - PHASE_3_END) / (PHASE_4_END - PHASE_3_END);
   
   // Calculate content offset based on main scroll progress
-  const contentOffset = immersiveProgress * 100; // 0% to 100% of content
+  // Add initial offset to prevent clipping at the beginning
+  const contentOffset = Math.max(0, immersiveProgress * 100); // 0% to 100% of content
 
   return (
     <div 
@@ -71,7 +72,8 @@ export const PhoneContentLayer: React.FC = () => {
               className="w-full transition-transform duration-300 ease-out"
               style={{
                 transform: `translateY(-${contentOffset}%)`,
-                height: '300%' // 3x height to accommodate all sections
+                height: '400%', // 4x height to accommodate all sections with proper spacing
+                paddingTop: '10%' // Add top padding to prevent clipping
               }}
             >
               {/* About Section */}

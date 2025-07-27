@@ -121,8 +121,8 @@ const HomeContent: React.FC = () => {
         {/* Independent Phone Content Layer (scrollable content) */}
         <PhoneContentLayer />
 
-        {/* Spacer for scroll content - Extra long for dramatic zoom-in dissolve */}
-        <div className="h-[1000vh]"></div>
+        {/* Spacer for scroll content - Extended for all immersive content */}
+        <div className="h-[2000vh]"></div>
 
         {/* Centered Get In Touch Section */}
         <section
