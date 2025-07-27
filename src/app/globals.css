@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: 255 255 255;
@@ -74,6 +76,8 @@
 * {
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
+
+
 
 /* Performance optimizations for 3D transforms */
 .phone-3d-container {

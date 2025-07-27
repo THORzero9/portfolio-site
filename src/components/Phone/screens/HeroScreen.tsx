@@ -1,10 +1,65 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
 import { PORTFOLIO_CONFIG } from '@/lib/constants';
 import { ChevronDown, Unlock } from 'lucide-react';
 
 export const HeroScreen: React.FC = () => {
+  const timeDisplayRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
+  const unlockRef = useRef<HTMLDivElement>(null);
+  const indicatorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Create orchestrated timeline for phone screen
+    const tl = gsap.timeline();
+
+    // Smooth time display entrance
+    tl.fromTo(timeDisplayRef.current,
+      { opacity: 0, y: -30, scale: 0.9, filter: 'blur(2px)' },
+      { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 0.8, ease: 'back.out(1.2)' }
+    );
+
+    // Profile section with bouncy entrance
+    tl.fromTo(profileRef.current,
+      { opacity: 0, scale: 0.7, y: 20, rotation: -3 },
+      { opacity: 1, scale: 1, y: 0, rotation: 0, duration: 1.0, ease: 'elastic.out(1, 0.4)' },
+      '-=0.4'
+    );
+
+    // Unlock indicator with smooth flow
+    tl.fromTo(unlockRef.current,
+      { opacity: 0, y: 30, scale: 0.9 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'back.out(1.1)' },
+      '-=0.3'
+    );
+
+    // Smooth continuous indicator animation
+    gsap.to(indicatorRef.current, {
+      scaleX: 1.3,
+      opacity: 0.9,
+      duration: 1.5,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut'
+    });
+
+    // Add subtle floating to profile
+    gsap.to(profileRef.current, {
+      y: -5,
+      duration: 3,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut',
+      delay: 1.5
+    });
+
+    return () => {
+      tl.kill();
+    };
+  }, []);
+
   return (
     <div className="w-full h-full bg-black text-white relative overflow-hidden">
       {/* Nothing OS Wallpaper Pattern */}
@@ -15,23 +70,13 @@ export const HeroScreen: React.FC = () => {
       </div>
 
       {/* Lock Screen Time Display */}
-      <motion.div
-        className="text-center pt-16 mb-8"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.6 }}
-      >
+      <div ref={timeDisplayRef} className="text-center pt-16 mb-8">
         <div className="font-display text-6xl font-thin mb-1 tracking-wide">12:30</div>
         <div className="font-body text-base font-light opacity-70">Friday, January 18</div>
-      </motion.div>
+      </div>
 
       {/* Profile Section - Nothing OS Style */}
-      <motion.div
-        className="absolute bottom-28 left-1/2 transform -translate-x-1/2 text-center"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.4, duration: 0.6 }}
-      >
+      <div ref={profileRef} className="absolute bottom-28 left-1/2 transform -translate-x-1/2 text-center">
         {/* Profile Picture with Nothing design language */}
         <div className="w-20 h-20 rounded-full border border-white/20 mb-4 mx-auto relative overflow-hidden backdrop-blur-sm">
           <div className="absolute inset-1 rounded-full bg-gradient-to-br from-white/10 to-transparent flex items-center justify-center border border-white/10">
@@ -48,28 +93,19 @@ export const HeroScreen: React.FC = () => {
           <div className="w-1.5 h-1.5 bg-white rounded-full opacity-50" />
           <div className="w-1.5 h-1.5 bg-white rounded-full opacity-30" />
         </div>
-      </motion.div>
+      </div>
 
       {/* Android/Nothing OS Unlock Indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.6 }}
-      >
+      <div ref={unlockRef} className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
         <div className="flex items-center space-x-2 text-xs opacity-60 mb-2">
           <Unlock size={12} />
           <span className="font-body font-light">Scroll to unlock</span>
         </div>
-        <motion.div
+        <div
+          ref={indicatorRef}
           className="w-10 h-0.5 bg-white rounded-full opacity-40"
-          animate={{ 
-            scaleX: [1, 1.2, 1],
-            opacity: [0.4, 0.8, 0.4]
-          }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         />
-      </motion.div>
+      </div>
 
       {/* Ambient light effects - Nothing Phone signature */}
       <div className="absolute top-0 right-0 w-px h-16 bg-gradient-to-b from-white/20 to-transparent" />

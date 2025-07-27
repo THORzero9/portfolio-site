@@ -3,7 +3,6 @@
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export const ThemeToggle: React.FC = () => {
   const { theme, setTheme } = useTheme();
@@ -11,45 +10,39 @@ export const ThemeToggle: React.FC = () => {
 
   useEffect(() => {
     setMounted(true);
+    console.log('ThemeToggle mounted, current theme:', theme);
   }, []);
 
+  useEffect(() => {
+    console.log('Theme changed to:', theme);
+  }, [theme]);
+
+  const handleClick = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    console.log('Theme toggle clicked:', { currentTheme: theme, newTheme });
+    setTheme(newTheme);
+  };
+
+  // Show loading state until mounted to avoid hydration mismatch
   if (!mounted) {
     return (
-      <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-800 animate-pulse" />
+      <div className="fixed top-8 right-8 z-50 w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse shadow-lg border border-gray-300 dark:border-gray-600" />
     );
   }
 
   return (
-    <motion.button
-      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-      className="fixed top-8 right-8 z-50 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-900/50 border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:scale-110 transition-transform"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
+    <button
+      onClick={handleClick}
+      className="fixed top-8 right-8 z-50 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-900/50 border border-gray-200 dark:border-gray-700 flex items-center justify-center transition-all duration-200 hover:shadow-xl hover:scale-105 active:scale-95"
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
-      <AnimatePresence mode="wait" initial={false}>
+      <div className="transition-transform duration-200">
         {theme === 'dark' ? (
-          <motion.div
-            key="moon"
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            exit={{ scale: 0, rotate: 180 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Moon className="w-5 h-5 text-yellow-500" />
-          </motion.div>
+          <Sun className="w-5 h-5 text-yellow-500" />
         ) : (
-          <motion.div
-            key="sun"
-            initial={{ scale: 0, rotate: 180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            exit={{ scale: 0, rotate: -180 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Sun className="w-5 h-5 text-yellow-600" />
-          </motion.div>
+          <Moon className="w-5 h-5 text-blue-600" />
         )}
-      </AnimatePresence>
-    </motion.button>
+      </div>
+    </button>
   );
 };

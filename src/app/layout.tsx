@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   description: "Android Developer specialized in Kotlin, Jetpack Compose, and AI integration using GCP. Building innovative mobile solutions with MVVM architecture and modern development practices.",
   keywords: ["Android Developer", "Kotlin", "Jetpack Compose", "Mobile Development", "AI", "GCP", "MVVM", "Bhaswat Gogoi"],
   authors: [{ name: "Bhaswat Gogoi" }],
+
   openGraph: {
     title: "Bhaswat Gogoi - Android Developer",
     description: "Android Developer specialized in Kotlin, Jetpack Compose, and AI integration using GCP. Building innovative mobile solutions with MVVM architecture.",
@@ -46,11 +47,12 @@ export default function RootLayout({
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem={true}
+          defaultTheme="dark"
+          enableSystem={false}
           disableTransitionOnChange={false}
+          storageKey="portfolio-theme"
+          forcedTheme="dark"
         >
-          <ThemeToggle />
           {children}
         </ThemeProvider>
       </body>

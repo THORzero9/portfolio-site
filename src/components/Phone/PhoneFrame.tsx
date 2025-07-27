@@ -1,10 +1,10 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { gsap } from 'gsap';
 import { PORTFOLIO_CONFIG } from '@/lib/constants';
 import { SectionId, PhoneState } from '@/lib/types';
 import { Wifi, Signal, Battery, Bluetooth, Volume } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface PhoneFrameProps {
   currentSection: SectionId;
@@ -15,6 +15,9 @@ interface PhoneFrameProps {
 
 export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneState, children, progress }) => {
   const [responsiveScale, setResponsiveScale] = useState(1.4);
+  const phoneContainerRef = useRef<HTMLDivElement>(null);
+  const backViewRef = useRef<HTMLDivElement>(null);
+  const frontViewRef = useRef<HTMLDivElement>(null);
   
   // Calculate dramatic zoom for back view (10-45% - starts even bigger!)
   const getBackViewScale = () => {
@@ -47,12 +50,10 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
         frontOpacity: 1 - easedProgress  // Fade out smoothly
       };
     }
-    // Explicitly prevent front view flash during transitions
-    const frontShouldBeVisible = phoneState === 'immersive' && progress >= 0.55;
-    
+    // Fixed visibility logic - front view only during immersive, back view for all other states
     return {
-      backOpacity: phoneState === 'backView' || phoneState === 'disappearing' ? 1 : 0,
-      frontOpacity: frontShouldBeVisible ? 1 : 0  // Only show front during immersive and after 55%
+      backOpacity: phoneState === 'immersive' ? 0 : 1,  // Hide back only during immersive
+      frontOpacity: phoneState === 'immersive' ? 1 : 0  // Show front only during immersive
     };
   };
   
@@ -96,6 +97,82 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
     
     return () => window.removeEventListener('resize', updateScale);
   }, []);
+
+  // Enhanced GSAP animations for smooth phone state changes with 3D rotation
+  useEffect(() => {
+    if (!phoneContainerRef.current) return;
+
+    const currentScale = phoneState === 'backView' ? getBackViewScale() :
+                        phoneState === 'flipping' ? responsiveScale * 0.9 :
+                        phoneState === 'immersive' ? responsiveScale :
+                        phoneState === 'flippingBack' ? responsiveScale * 0.9 :
+                        phoneState === 'disappearing' ? getDisappearingScale() : getBackViewScale();
+
+    const currentOpacity = phoneState === 'disappearing' ? (progress > 0.95 ? 0 : 1) : 1;
+
+    // Clean rotation logic - back at 0°, front at 180°
+    const currentRotationY = (phoneState === 'immersive' || phoneState === 'flippingBack') ? 180 : 0;
+
+    const currentZ = phoneState === 'backView' ? -200 :
+                     phoneState === 'flipping' || phoneState === 'flippingBack' ? 0 :
+                     phoneState === 'immersive' ? 50 :
+                     phoneState === 'disappearing' ? -500 : -200;
+
+    // Use different easing based on phone state for smoother transitions
+    const easing = phoneState === 'backView' ? 'power1.inOut' :
+                   phoneState === 'flipping' || phoneState === 'flippingBack' ? 'power2.inOut' :
+                   phoneState === 'immersive' ? 'back.out(1.1)' :
+                   phoneState === 'disappearing' ? 'power2.in' : 'power1.inOut';
+
+    const duration = phoneState === 'flipping' || phoneState === 'flippingBack' ? 1.0 : 
+                     phoneState === 'immersive' ? 1.8 :
+                     phoneState === 'disappearing' ? 1.2 : 1.8;
+
+          gsap.to(phoneContainerRef.current, {
+        scale: currentScale,
+        opacity: currentOpacity,
+        rotationY: currentRotationY,
+        z: currentZ,
+        duration,
+        ease: easing,
+        transformOrigin: 'center center',
+        transformStyle: 'preserve-3d',
+        // Explicitly disable 3D context for child elements during scroll-critical states
+        onComplete: () => {
+          if (phoneContainerRef.current) {
+            // Always set to flat when in immersive to enable scrolling
+            phoneContainerRef.current.style.transformStyle = phoneState === 'immersive' ? 'flat' : 'preserve-3d';
+            phoneContainerRef.current.style.pointerEvents = 'auto';
+            
+            // Remove any transforms that might interfere with scrolling in immersive mode
+            if (phoneState === 'immersive') {
+              phoneContainerRef.current.style.willChange = 'auto';
+            }
+          }
+        }
+      });
+  }, [phoneState, progress, responsiveScale]);
+
+  // Opacity-based visibility control - backup for smooth transitions
+  useEffect(() => {
+    const opacities = getViewOpacities();
+    
+    if (backViewRef.current) {
+      gsap.to(backViewRef.current, {
+        opacity: opacities.backOpacity,
+        duration: 0.6,
+        ease: 'power1.inOut'
+      });
+    }
+
+    if (frontViewRef.current) {
+      gsap.to(frontViewRef.current, {
+        opacity: opacities.frontOpacity,
+        duration: 0.6,
+        ease: 'power1.inOut'
+      });
+    }
+  }, [phoneState, progress]);
 
   // 3D Animation variants for Nothing Phone states
   const phoneVariants = {
@@ -165,42 +242,31 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
   // Let backface-visibility handle showing/hiding automatically based on rotation
 
   return (
-    <div className="relative flex items-center justify-center phone-3d-container">
+    <div className="relative flex items-center justify-center phone-3d-container" style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}>
       {/* Nothing Phone 2a Container - Browser-Compatible Flip */}
-      <motion.div
+      <div
+        ref={phoneContainerRef}
         className={`relative phone-3d-element`}
         style={{
           width: PORTFOLIO_CONFIG.phone.width,
           height: PORTFOLIO_CONFIG.phone.height,
           transformOrigin: 'center center',
+          transformStyle: phoneState === 'immersive' ? 'flat' : 'preserve-3d',
           willChange: 'transform',
-          isolation: 'isolate'  // Force new stacking context
-        }}
-        animate={{
-          scale: phoneState === 'backView' ? getBackViewScale() :     // Gradual zoom 10-45%
-                 phoneState === 'flipping' ? 1.0 :                    // Full size during fade
-                 phoneState === 'immersive' ? responsiveScale : 
-                 phoneState === 'flippingBack' ? responsiveScale :    // Maintain size during fade back
-                 phoneState === 'disappearing' ? getDisappearingScale() : getBackViewScale(),  // Use backView scale as default
-          opacity: phoneState === 'disappearing' ? (progress > 0.95 ? 0 : 1) : 1,  // Fade out at the very end (95%+)
-          // Pure zoom and fade transitions only
-        }}
-        initial={{
           scale: 0.94,  // Start with bigger scale immediately
-          opacity: 1
-        }}
-        transition={{
-          duration: phoneState === 'flipping' || phoneState === 'flippingBack' ? 0.8 : 1.5,
-          ease: "easeInOut"
+          opacity: 1,
+          pointerEvents: 'auto'  // Ensure touch events work
         }}
       >
         {/* Nothing Phone 2a BACK VIEW - Using Authentic Image Asset */}
-        <motion.div 
+        <div 
+          ref={backViewRef}
           className={`absolute inset-0 phone-animation`}
-          animate={{
-            opacity: getViewOpacities().backOpacity
+          style={{
+            transform: 'rotateY(0deg)',
+            backfaceVisibility: 'hidden',
+            pointerEvents: 'auto'  // Ensure this view can receive touch events
           }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
         >
           {/* Authentic Nothing Phone 2a Back Image */}
           <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-2xl">
@@ -214,19 +280,18 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
               }}
             />
           </div>
-        </motion.div>
+        </div>
 
         {/* Nothing Phone 2a FRONT VIEW */}
-        <motion.div 
-          className={`absolute inset-0 phone-animation ${phoneState === 'immersive' ? 'block' : 'hidden'}`}
+        <div 
+          ref={frontViewRef}
+          className={`absolute inset-0 phone-animation`}
           style={{
-            isolation: 'isolate',
-            zIndex: 1
+            zIndex: 1,
+            transform: 'rotateY(180deg)',  // Restore proper rotation for flip
+            backfaceVisibility: 'hidden',
+            pointerEvents: 'auto'  // Ensure this view can receive touch events
           }}
-          animate={{
-            opacity: getViewOpacities().frontOpacity
-          }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
         >
           {/* Enhanced Front Frame - Dark Gray/Black */}
           <div className="relative w-full h-full bg-gradient-to-b from-gray-800 to-gray-900 rounded-[2.5rem] p-[2px] shadow-2xl">
@@ -249,8 +314,27 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
                 </div>
 
                 {/* Phone Screen Content */}
-                <div className="absolute inset-0 pt-8 pb-12">
-                  <div className="w-full h-full relative overflow-hidden">
+                <div 
+                  className="absolute inset-0 pt-8 pb-12" 
+                  style={{ 
+                    pointerEvents: 'auto',
+                    transform: 'translateZ(0)',  // Force new layer to escape 3D context
+                    willChange: 'auto'
+                  }}
+                  onMouseEnter={(e) => e.stopPropagation()}
+                  onMouseLeave={(e) => e.stopPropagation()}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div 
+                    className="w-full h-full relative" 
+                    style={{ 
+                      pointerEvents: 'auto',
+                      touchAction: 'pan-y',  // Only allow vertical scrolling
+                      WebkitOverflowScrolling: 'touch',
+                      transform: 'translateZ(0)',  // Force hardware acceleration on separate layer
+                      isolation: 'isolate'
+                    }}
+                  >
                     {children}
                   </div>
                 </div>
@@ -264,8 +348,8 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
               </div>
             </div>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   );
 };

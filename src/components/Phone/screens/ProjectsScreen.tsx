@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
 import { PROJECTS } from '@/lib/constants';
 import { ExternalLink, Github, Play, Calendar } from 'lucide-react';
 
@@ -31,12 +32,9 @@ export const ProjectsScreen: React.FC<ProjectsScreenProps> = ({ progress }) => {
 
       {/* Project Demo Area */}
       <div className="flex-1 relative bg-black">
-        <motion.div
+        <div
           key={currentProject.id}
           className="absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
         >
           {/* Demo Video Placeholder */}
           <div className="w-full h-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
@@ -45,8 +43,8 @@ export const ProjectsScreen: React.FC<ProjectsScreenProps> = ({ progress }) => {
               <p className="font-body text-sm opacity-80">Demo Video</p>
               <p className="font-body text-xs opacity-60 mt-1">{currentProject.title}</p>
             </div>
+                      </div>
           </div>
-        </motion.div>
 
         {/* Project Navigation Dots */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
@@ -93,25 +91,21 @@ export const ProjectsScreen: React.FC<ProjectsScreenProps> = ({ progress }) => {
 
         {/* Action Buttons */}
         <div className="flex space-x-3">
-          <motion.button
-            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors"
+          <button
+            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center space-x-2 hover:bg-blue-700 transition-colors hover:scale-105 active:scale-95"
             onClick={() => handleLinkClick(currentProject.liveUrl)}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
           >
             <ExternalLink size={16} />
             <span className="font-body">View Live</span>
-          </motion.button>
+          </button>
 
-          <motion.button
-            className="flex-1 bg-gray-900 text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center space-x-2 hover:bg-gray-800 transition-colors"
+          <button
+            className="flex-1 bg-gray-900 text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center space-x-2 hover:bg-gray-800 transition-colors hover:scale-105 active:scale-95"
             onClick={() => handleLinkClick(currentProject.githubUrl)}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
           >
             <Github size={16} />
             <span className="font-body">Code</span>
-          </motion.button>
+          </button>
         </div>
       </div>
     </div>
