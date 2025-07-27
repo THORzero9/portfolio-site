@@ -136,6 +136,25 @@
   transform: translateZ(0);
 }
 
+/* Phone image scaling optimizations */
+.phone-image {
+  transform-origin: center center;
+  -webkit-transform-origin: center center;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+}
+
+.phone-container {
+  transform-origin: center center;
+  -webkit-transform-origin: center center;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
 .glass-texture {
   background: linear-gradient(
     135deg,

@@ -137,6 +137,7 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
         ease: easing,
         transformOrigin: 'center center',
         transformStyle: 'preserve-3d',
+        force3D: true,
         // Explicitly disable 3D context for child elements during scroll-critical states
         onComplete: () => {
           if (phoneContainerRef.current) {
@@ -151,6 +152,20 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
           }
         }
       });
+
+      // Also animate the image inside for better scaling effect
+      if (backViewRef.current) {
+        const backImage = backViewRef.current.querySelector('img');
+        if (backImage) {
+          gsap.to(backImage, {
+            scale: phoneState === 'backView' ? 1 + (progress * 0.1) : 1,
+            duration: 0.3,
+            ease: 'power1.inOut',
+            force3D: true,
+            transformOrigin: 'center center'
+          });
+        }
+      }
   }, [phoneState, progress, responsiveScale]);
 
   // Opacity-based visibility control - backup for smooth transitions
@@ -246,7 +261,7 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
       {/* Nothing Phone 2a Container - Browser-Compatible Flip */}
       <div
         ref={phoneContainerRef}
-        className={`relative phone-3d-element`}
+        className={`relative phone-3d-element phone-container`}
         style={{
           width: PORTFOLIO_CONFIG.phone.width,
           height: PORTFOLIO_CONFIG.phone.height,
@@ -265,18 +280,23 @@ export const PhoneFrame: React.FC<PhoneFrameProps> = ({ currentSection, phoneSta
           style={{
             transform: 'rotateY(0deg)',
             backfaceVisibility: 'hidden',
-            pointerEvents: 'auto'  // Ensure this view can receive touch events
+            pointerEvents: 'auto',  // Ensure this view can receive touch events
+            transformOrigin: 'center center',
+            willChange: 'transform'
           }}
         >
           {/* Authentic Nothing Phone 2a Back Image */}
-          <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-2xl">
+          <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-2xl" style={{ transformOrigin: 'center center' }}>
             {/* Background image - authentic Nothing Phone 2a back */}
             <img 
               src="/assets/images/phone-2a-back.png"
               alt="Nothing Phone 2a Back"
-              className="absolute inset-0 w-full h-full object-cover object-center rounded-[2.5rem]"
+              className="absolute inset-0 w-full h-full object-contain object-center rounded-[2.5rem] phone-image"
               style={{ 
-                imageRendering: 'crisp-edges'
+                imageRendering: 'crisp-edges',
+                transform: 'scale(1)',
+                transformOrigin: 'center center',
+                willChange: 'transform'
               }}
             />
           </div>
