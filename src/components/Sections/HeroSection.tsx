@@ -29,11 +29,17 @@ export const HeroSection: React.FC = () => {
     const shapes = [floatingShape1Ref.current, floatingShape2Ref.current, floatingShape3Ref.current];
     shapes.forEach(shape => {
       if (shape) {
+        // Force hardware acceleration and proper transform setup
         gsap.set(shape, {
           transformOrigin: 'center center',
           force3D: true,
-          willChange: 'transform, opacity'
+          willChange: 'transform, opacity',
+          transform: 'translate3d(0, 0, 0)',
+          backfaceVisibility: 'hidden'
         });
+        
+        // Ensure CSS classes are applied
+        shape.classList.add('floating-shape', 'transform-gpu');
       }
     });
 
@@ -163,44 +169,41 @@ export const HeroSection: React.FC = () => {
 
     // Apply different parallax speeds to background shapes with production-safe transforms
     if (floatingShape1Ref.current) {
-      gsap.to(floatingShape1Ref.current, {
+      gsap.set(floatingShape1Ref.current, {
         y: -progress * 80 * parallaxIntensity + depthShift,
         x: progress * 40 * parallaxIntensity,
         rotation: progress * 15,
         scale: 1 - progress * 0.1,
         opacity: Math.max(0.1, 1 - progress * 0.7),
-        duration: 0.3,
-        ease: 'none',
         force3D: true,
-        transformOrigin: 'center center'
+        transformOrigin: 'center center',
+        immediateRender: true
       });
     }
 
     if (floatingShape2Ref.current) {
-      gsap.to(floatingShape2Ref.current, {
+      gsap.set(floatingShape2Ref.current, {
         y: -progress * 60 * parallaxIntensity + depthShift,
         x: progress * -30 * parallaxIntensity,
         rotation: progress * -20,
         scale: 1 - progress * 0.15,
         opacity: Math.max(0.1, 1 - progress * 0.8),
-        duration: 0.3,
-        ease: 'none',
         force3D: true,
-        transformOrigin: 'center center'
+        transformOrigin: 'center center',
+        immediateRender: true
       });
     }
 
     if (floatingShape3Ref.current) {
-      gsap.to(floatingShape3Ref.current, {
+      gsap.set(floatingShape3Ref.current, {
         y: -progress * 100 * parallaxIntensity + depthShift,
         x: progress * 25 * parallaxIntensity,
         rotation: progress * 10,
         scale: 1 - progress * 0.2,
         opacity: Math.max(0.1, 1 - progress * 0.9),
-        duration: 0.3,
-        ease: 'none',
         force3D: true,
-        transformOrigin: 'center center'
+        transformOrigin: 'center center',
+        immediateRender: true
       });
     }
 
@@ -282,19 +285,19 @@ export const HeroSection: React.FC = () => {
         {/* Floating Shape 1 */}
         <div 
           ref={floatingShape1Ref}
-          className="absolute top-20 left-10 w-32 h-32 rounded-full bg-gradient-to-br from-blue-200/30 to-purple-200/30 dark:from-blue-800/20 dark:to-purple-800/20 blur-sm floating-shape transform-gpu"
+          className="absolute top-20 left-10 w-32 h-32 rounded-full bg-gradient-to-br from-blue-200/30 to-purple-200/30 dark:from-blue-800/20 dark:to-purple-800/20 blur-sm floating-shape transform-gpu float-animation-1"
         />
         
         {/* Floating Shape 2 */}
         <div 
           ref={floatingShape2Ref}
-          className="absolute top-40 right-20 w-24 h-24 rounded-full bg-gradient-to-br from-purple-200/40 to-pink-200/40 dark:from-purple-800/30 dark:to-pink-800/30 blur-sm floating-shape transform-gpu"
+          className="absolute top-40 right-20 w-24 h-24 rounded-full bg-gradient-to-br from-purple-200/40 to-pink-200/40 dark:from-purple-800/30 dark:to-pink-800/30 blur-sm floating-shape transform-gpu float-animation-2"
         />
         
         {/* Floating Shape 3 */}
         <div 
           ref={floatingShape3Ref}
-          className="absolute bottom-40 left-1/3 w-20 h-20 rounded-full bg-gradient-to-br from-blue-300/30 to-cyan-300/30 dark:from-blue-700/20 dark:to-cyan-700/20 blur-sm floating-shape transform-gpu"
+          className="absolute bottom-40 left-1/3 w-20 h-20 rounded-full bg-gradient-to-br from-blue-300/30 to-cyan-300/30 dark:from-blue-700/20 dark:to-cyan-700/20 blur-sm floating-shape transform-gpu float-animation-3"
         />
 
         {/* Subtle grid pattern */}

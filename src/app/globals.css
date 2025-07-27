@@ -345,6 +345,61 @@ body {
   -webkit-backface-visibility: hidden;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
+  transform-origin: center center;
+  -webkit-transform-origin: center center;
+}
+
+/* CSS fallback animations for floating shapes */
+@keyframes float-shape-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    -webkit-transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(10px, -15px, 0) rotate(5deg);
+    -webkit-transform: translate3d(10px, -15px, 0) rotate(5deg);
+  }
+}
+
+@keyframes float-shape-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    -webkit-transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(-15px, 20px, 0) rotate(-3deg);
+    -webkit-transform: translate3d(-15px, 20px, 0) rotate(-3deg);
+  }
+}
+
+@keyframes float-shape-3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    -webkit-transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(8px, -10px, 0) rotate(2deg);
+    -webkit-transform: translate3d(8px, -10px, 0) rotate(2deg);
+  }
+}
+
+.float-animation-1 {
+  animation: float-shape-1 4s ease-in-out infinite;
+  -webkit-animation: float-shape-1 4s ease-in-out infinite;
+}
+
+.float-animation-2 {
+  animation: float-shape-2 5s ease-in-out infinite;
+  -webkit-animation: float-shape-2 5s ease-in-out infinite;
+  animation-delay: 1s;
+  -webkit-animation-delay: 1s;
+}
+
+.float-animation-3 {
+  animation: float-shape-3 3.5s ease-in-out infinite;
+  -webkit-animation: float-shape-3 3.5s ease-in-out infinite;
+  animation-delay: 2s;
+  -webkit-animation-delay: 2s;
 }
 
 /* Production-safe GSAP transform classes */
