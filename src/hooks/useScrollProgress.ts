@@ -15,18 +15,18 @@ export const useScrollProgress = () => {
   const scrollDirection = useRef<'up' | 'down'>('down');
   const lastScrollY = useRef(0);
 
-  // Optimized phase boundaries - Extended for better content distribution
-  const PHASE_1_END = 0.08;      // End of hero section - phone hidden (shorter)
-  const PHASE_2_START = 0.08;    // Nothing Phone back appears immediately - NO GAP!
-  const PHASE_2_MID = 0.25;      // Back view zooming in gradually (extended for more drama)
-  const PHASE_2_END = 0.35;      // Back view fully zoomed and close (extended)
-  const PHASE_3_START = 0.35;    // Start flip from back to front - NO GAP!
-  const PHASE_3_MID = 0.40;      // Mid flip transition (SHORTENED - was 0.48)
-  const PHASE_3_END = 0.45;      // Complete flip, immersive begins (SHORTENED - was 0.56)
-  const PHASE_4_END = 0.75;      // End of immersive content (extended for more content space)
-  const PHASE_5_START = 0.75;    // Start flip from front to back - NO GAP!
-  const PHASE_5_MID = 0.80;      // Mid flip back transition (SHORTENED - was 0.85)  
-  const PHASE_5_END = 0.85;      // Complete flip to back (kept same)
+  // Optimized phase boundaries - Prioritize content over transitions
+  const PHASE_1_END = 0.05;      // End of hero section - phone hidden (shorter)
+  const PHASE_2_START = 0.05;    // Nothing Phone back appears immediately - NO GAP!
+  const PHASE_2_MID = 0.15;      // Back view zooming in gradually (shorter for content)
+  const PHASE_2_END = 0.20;      // Back view fully zoomed and close (shorter)
+  const PHASE_3_START = 0.20;    // Start flip from back to front - NO GAP!
+  const PHASE_3_MID = 0.22;      // Mid flip transition (MUCH SHORTER)
+  const PHASE_3_END = 0.25;      // Complete flip, immersive begins (MUCH SHORTER)
+  const PHASE_4_END = 0.80;      // End of immersive content (MUCH LONGER - 55% of scroll!)
+  const PHASE_5_START = 0.80;    // Start flip from front to back - NO GAP!
+  const PHASE_5_MID = 0.82;      // Mid flip back transition (SHORTER)  
+  const PHASE_5_END = 0.85;      // Complete flip to back (shorter)
   const PHASE_6_START = 0.85;    // Phone disappears slowly - NO GAP!
 
   // Enhanced mobile scroll support - ensure smooth progression
