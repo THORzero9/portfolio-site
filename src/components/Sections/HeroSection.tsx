@@ -368,7 +368,7 @@ export const HeroSection: React.FC = () => {
           ref={descriptionRef}
           className="font-body text-xl text-gray-600 dark:text-gray-400 leading-relaxed max-w-4xl mx-auto mb-8"
             >
-              Android Developer with hands-on experience building full-stack, AI-powered applications using Kotlin and Jetpack Compose. 
+              Passionate about building full-stack, AI-powered applications using Kotlin and Jetpack Compose. 
               Specializing in modern Android development with GCP integration and MVVM architecture.
         </p>
 
