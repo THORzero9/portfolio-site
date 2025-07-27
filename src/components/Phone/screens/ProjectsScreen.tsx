@@ -43,7 +43,7 @@ export const ProjectsScreen: React.FC<ProjectsScreenProps> = ({ progress }) => {
               <p className="font-body text-sm opacity-80">Demo Video</p>
               <p className="font-body text-xs opacity-60 mt-1">{currentProject.title}</p>
             </div>
-                      </div>
+          </div>
           </div>
 
         {/* Project Navigation Dots */}

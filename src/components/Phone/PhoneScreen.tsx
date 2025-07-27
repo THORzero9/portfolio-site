@@ -78,14 +78,14 @@ export const PhoneScreen: React.FC<PhoneScreenProps> = ({ currentSection, progre
     <div className="w-full h-full relative">
       <div
         ref={screenRef}
-        key={currentSection}
-        className="w-full h-full"
+          key={currentSection}
+          className="w-full h-full"
         style={{ 
           pointerEvents: 'auto',
           touchAction: 'auto'
         }}
-      >
-        {renderScreen()}
+        >
+          {renderScreen()}
       </div>
     </div>
   );

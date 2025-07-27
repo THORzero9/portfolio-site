@@ -77,7 +77,7 @@ export const TechStackScreen: React.FC = () => {
                       </h4>
 
                     </div>
-                                      </div>
+                    </div>
                   </div>
               ))}
             </div>

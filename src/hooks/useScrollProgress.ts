@@ -31,56 +31,56 @@ export const useScrollProgress = () => {
 
   // Optimized scroll calculation with RAF
   const calculateProgress = useCallback(() => {
-    const scrollTop = window.scrollY;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const scrollProgress = Math.max(0, Math.min(scrollTop / Math.max(docHeight, 1), 1));
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollProgress = Math.max(0, Math.min(scrollTop / Math.max(docHeight, 1), 1));
     
     // Track scroll direction for optimizations
     scrollDirection.current = scrollTop > lastScrollY.current ? 'down' : 'up';
     lastScrollY.current = scrollTop;
     
-    setProgress(scrollProgress);
+      setProgress(scrollProgress);
 
     // Optimized state management with early returns
-    if (scrollProgress < PHASE_1_END) {
-      // Phase 1: Hero section - phone hidden
-      setCurrentSection('hero');
-      if (phoneState !== 'hidden') {
-        setPhoneState('hidden');
+      if (scrollProgress < PHASE_1_END) {
+        // Phase 1: Hero section - phone hidden
+        setCurrentSection('hero');
+        if (phoneState !== 'hidden') {
+          setPhoneState('hidden');
         setIsImmersive(false);
       }
       return;
-    }
+        }
 
     if (scrollProgress >= PHASE_2_START && scrollProgress < PHASE_2_END) {
       // Phase 2: Nothing Phone back view appears and zooms
-      setCurrentSection('about');
-      if (phoneState !== 'backView') {
-        setPhoneState('backView');
+        setCurrentSection('about');
+        if (phoneState !== 'backView') {
+          setPhoneState('backView');
         setIsImmersive(false);
       }
       return;
-    }
+        }
 
     if (scrollProgress >= PHASE_3_START && scrollProgress < PHASE_3_END) {
       // Phase 3: Flip from back to front (SHORTENED duration)
-      setCurrentSection('about');
-      if (phoneState !== 'flipping') {
-        setPhoneState('flipping');
+        setCurrentSection('about');
+        if (phoneState !== 'flipping') {
+          setPhoneState('flipping');
         setIsImmersive(false);
       }
       return;
-    }
+        }
 
     if (scrollProgress >= PHASE_3_END && scrollProgress < PHASE_4_END) {
       // Phase 4: Immersive phone content experience
-      if (phoneState !== 'immersive') {
-        setPhoneState('immersive');
+        if (phoneState !== 'immersive') {
+          setPhoneState('immersive');
         setIsImmersive(true);
-      }
-      
+        }
+        
       // Update current section based on progress within immersive phase (About → Projects → Tech Stack)
-      const immersiveProgress = (scrollProgress - PHASE_3_END) / (PHASE_4_END - PHASE_3_END);
+        const immersiveProgress = (scrollProgress - PHASE_3_END) / (PHASE_4_END - PHASE_3_END);
       
       if (immersiveProgress < 0.33) {
         setCurrentSection('about');
@@ -88,15 +88,15 @@ export const useScrollProgress = () => {
         setCurrentSection('projects');
       } else {
         setCurrentSection('tech-stack');
-      }
+        }
       return;
     }
 
     if (scrollProgress >= PHASE_5_START && scrollProgress < PHASE_5_END) {
       // Phase 5: Flip from front to back (SHORTENED duration)
-      setCurrentSection('tech-stack');
-      if (phoneState !== 'flippingBack') {
-        setPhoneState('flippingBack');
+        setCurrentSection('tech-stack');
+        if (phoneState !== 'flippingBack') {
+          setPhoneState('flippingBack');
         setIsImmersive(false);
       }
       return;
@@ -106,11 +106,11 @@ export const useScrollProgress = () => {
       // Phase 6: Phone disappears, show regular content
       setCurrentSection('tech-stack');
       if (phoneState !== 'disappearing') {
-        setPhoneState('disappearing');
+          setPhoneState('disappearing');
         setIsImmersive(false);
       }
       return;
-    }
+      }
   }, [phoneState]);
 
   // Debounced scroll handler with RAF for optimal performance
@@ -142,7 +142,7 @@ export const useScrollProgress = () => {
       passive: true,  // Passive listener for better performance
       capture: false
     };
-    
+
     window.addEventListener('scroll', handleScroll, scrollOptions);
     window.addEventListener('resize', calculateProgress, scrollOptions);
 
@@ -183,9 +183,9 @@ export const useScrollProgress = () => {
     }
   }, []);
 
-  return {
-    progress,
-    currentSection,
+  return { 
+    progress, 
+    currentSection, 
     phoneState,
     isImmersive,
     // Additional performance data

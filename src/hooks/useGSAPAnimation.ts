@@ -1,6 +1,12 @@
 import { useRef, useEffect, useCallback } from 'react';
 import { gsap } from 'gsap';
-import { animations, GSAP_CONFIG } from '@/lib/gsap';
+import { 
+  createOptimizedAnimation, 
+  createStaggerAnimation, 
+  createScrollTriggerAnimation,
+  cleanupAnimation,
+  GSAP_CONFIG 
+} from '@/lib/gsap';
 
 interface UseGSAPAnimationOptions {
   duration?: number;
@@ -13,7 +19,7 @@ export const useGSAPAnimation = (options: UseGSAPAnimationOptions = {}) => {
   const elementRef = useRef<HTMLElement>(null);
   const animationRef = useRef<gsap.core.Tween | gsap.core.Timeline | null>(null);
 
-  const animate = useCallback((animationType: keyof typeof animations, customOptions?: UseGSAPAnimationOptions) => {
+  const animate = useCallback((animationType: string, customOptions?: UseGSAPAnimationOptions) => {
     if (!elementRef.current) return;
 
     const mergedOptions = { ...options, ...customOptions };
@@ -23,38 +29,17 @@ export const useGSAPAnimation = (options: UseGSAPAnimationOptions = {}) => {
       animationRef.current.kill();
     }
 
-    // Create new animation based on type
-    switch (animationType) {
-      case 'fadeIn':
-        animationRef.current = animations.fadeIn(elementRef.current, mergedOptions.duration);
-        break;
-      case 'fadeOut':
-        animationRef.current = animations.fadeOut(elementRef.current, mergedOptions.duration);
-        break;
-      case 'slideInUp':
-        animationRef.current = animations.slideInUp(elementRef.current, mergedOptions.duration);
-        break;
-      case 'slideInDown':
-        animationRef.current = animations.slideInDown(elementRef.current, mergedOptions.duration);
-        break;
-      case 'scaleIn':
-        animationRef.current = animations.scaleIn(elementRef.current, mergedOptions.duration);
-        break;
-      case 'scaleOut':
-        animationRef.current = animations.scaleOut(elementRef.current, mergedOptions.duration);
-        break;
-      default:
-        animationRef.current = animations.fadeIn(elementRef.current, mergedOptions.duration);
-    }
-
-    // Add delay if specified
-    if (mergedOptions.delay && animationRef.current) {
-      animationRef.current.delay(mergedOptions.delay);
-    }
-
-    // Add completion callback
-    if (mergedOptions.onComplete && animationRef.current) {
-      animationRef.current.eventCallback('onComplete', mergedOptions.onComplete);
+    // Create animation using the optimized function
+    const animation = createOptimizedAnimation(elementRef.current, animationType);
+    
+    if (animation) {
+      // Call the animation function with delay if specified
+      animationRef.current = animation(mergedOptions.delay || 0);
+      
+      // Add completion callback
+      if (mergedOptions.onComplete && animationRef.current) {
+        animationRef.current.eventCallback('onComplete', mergedOptions.onComplete);
+      }
     }
 
     return animationRef.current;
@@ -62,12 +47,22 @@ export const useGSAPAnimation = (options: UseGSAPAnimationOptions = {}) => {
 
   const hoverScale = useCallback((scale = 1.05) => {
     if (!elementRef.current) return;
-    return animations.hoverScale(elementRef.current, scale);
+    return gsap.to(elementRef.current, {
+      scale,
+      duration: GSAP_CONFIG.duration.micro,
+      ease: GSAP_CONFIG.ease.smooth,
+      force3D: true
+    });
   }, []);
 
   const resetScale = useCallback(() => {
     if (!elementRef.current) return;
-    return animations.resetScale(elementRef.current);
+    return gsap.to(elementRef.current, {
+      scale: 1,
+      duration: GSAP_CONFIG.duration.micro,
+      ease: GSAP_CONFIG.ease.smooth,
+      force3D: true
+    });
   }, []);
 
   const killAnimation = useCallback(() => {
@@ -90,8 +85,7 @@ export const useGSAPAnimation = (options: UseGSAPAnimationOptions = {}) => {
     hoverScale,
     resetScale,
     killAnimation,
-    gsap,
-    animations
+    gsap
   };
 };
 
@@ -100,7 +94,7 @@ export const useGSAPStagger = (selector: string, options: UseGSAPAnimationOption
   const containerRef = useRef<HTMLElement>(null);
   const animationRef = useRef<gsap.core.Timeline | null>(null);
 
-  const staggerIn = useCallback((stagger = GSAP_CONFIG.stagger) => {
+  const staggerIn = useCallback((animationType: 'slideIn' | 'fadeIn' | 'scaleIn' = 'fadeIn', stagger = 0.1) => {
     if (!containerRef.current) return;
 
     const elements = containerRef.current.querySelectorAll(selector);
@@ -111,9 +105,9 @@ export const useGSAPStagger = (selector: string, options: UseGSAPAnimationOption
       animationRef.current.kill();
     }
 
-    animationRef.current = animations.staggerIn(selector, 'fadeIn', stagger);
+    animationRef.current = createStaggerAnimation(elements, animationType, stagger);
     
-    if (options.onComplete) {
+    if (options.onComplete && animationRef.current) {
       animationRef.current.eventCallback('onComplete', options.onComplete);
     }
 

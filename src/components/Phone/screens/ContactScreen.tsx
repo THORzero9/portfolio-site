@@ -275,11 +275,11 @@ export const ContactScreen: React.FC = () => {
                 ease: 'power2.out'
               });
             }}
-          >
+            >
             <div className="flex items-center justify-center space-x-2">
               <Mail size={18} />
               <span>Send Email</span>
-            </div>
+          </div>
           </a>
 
           <a 

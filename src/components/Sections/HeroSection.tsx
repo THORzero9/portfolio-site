@@ -309,7 +309,7 @@ export const HeroSection: React.FC = () => {
               }}
             >
               {PORTFOLIO_CONFIG.personal.name.split(' ')[0]}
-            </span>
+              </span>
             
             {/* Glowing text layer that follows cursor */}
             <span 
@@ -329,20 +329,20 @@ export const HeroSection: React.FC = () => {
             </span>
           </span>
         </h1>
-        
+            
         <p
           ref={subtitleRef}
           className="font-body text-xl lg:text-2xl text-gray-600 dark:text-gray-400 font-medium tracking-wide mb-6"
-        >
-          {PORTFOLIO_CONFIG.personal.title}
+            >
+              {PORTFOLIO_CONFIG.personal.title}
         </p>
-        
+            
         <p
           ref={descriptionRef}
           className="font-body text-xl text-gray-600 dark:text-gray-400 leading-relaxed max-w-4xl mx-auto mb-8"
-        >
-          Android Developer with hands-on experience building full-stack, AI-powered applications using Kotlin and Jetpack Compose. 
-          Specializing in modern Android development with GCP integration and MVVM architecture.
+            >
+              Android Developer with hands-on experience building full-stack, AI-powered applications using Kotlin and Jetpack Compose. 
+              Specializing in modern Android development with GCP integration and MVVM architecture.
         </p>
 
         {/* Available Badge - Now at the end */}
@@ -350,23 +350,23 @@ export const HeroSection: React.FC = () => {
           <span className="px-6 py-3 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-full text-lg font-semibold border border-green-200 dark:border-green-800/50 shadow-sm">
             Available for opportunities
           </span>
-        </div>
+          </div>
 
         {/* Enhanced scroll indicator */}
         <div
           ref={scrollIndicatorRef}
-          className="flex flex-col items-center space-y-6 pt-8"
-        >
-          <p className="font-body text-lg text-gray-600 dark:text-gray-400 font-medium">
+              className="flex flex-col items-center space-y-6 pt-8"
+            >
+              <p className="font-body text-lg text-gray-600 dark:text-gray-400 font-medium">
             Scroll to experience
-          </p>
+              </p>
           <div className="flex flex-col items-center space-y-3">
-            <div className="w-6 h-10 border-2 border-gray-400 dark:border-gray-500 rounded-full flex justify-center">
+                <div className="w-6 h-10 border-2 border-gray-400 dark:border-gray-500 rounded-full flex justify-center">
               <div
                 ref={scrollDotRef}
-                className="w-1 h-3 bg-gray-600 dark:bg-gray-400 rounded-full mt-2"
-              />
-            </div>
+                    className="w-1 h-3 bg-gray-600 dark:bg-gray-400 rounded-full mt-2"
+                  />
+                </div>
                                  <ChevronDown className="w-5 h-5 text-gray-600 dark:text-gray-400 animate-bounce" />
           </div>
         </div>

@@ -75,35 +75,35 @@ const HomeContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-950 dark:via-gray-900 dark:to-blue-950 transition-colors duration-300">
       {/* Enhanced Background Overlay for Immersive Mode */}
-      <>
+          <>
         <div
           ref={overlayRef1}
-          className="fixed inset-0 z-40 pointer-events-none"
-          style={{
+              className="fixed inset-0 z-40 pointer-events-none"
+              style={{
             background: 'radial-gradient(ellipse 400px 600px at center, transparent 0%, transparent 35%, rgba(0,0,0,0.9) 50%)',
             opacity: 0,
             display: phoneState === 'immersive' ? 'block' : 'none'
-          }}
-        />
+              }}
+            />
         <div
           ref={overlayRef2}
-          className="fixed inset-0 z-40 pointer-events-none"
-          style={{
+              className="fixed inset-0 z-40 pointer-events-none"
+              style={{
             background: 'radial-gradient(ellipse 500px 700px at center, transparent 0%, transparent 40%, rgba(0,0,0,0.3) 60%)',
             opacity: 0,
             display: phoneState === 'immersive' ? 'block' : 'none'
-          }}
-        />
+              }}
+            />
         <div
           ref={overlayRef3}
-          className="fixed inset-0 z-40 pointer-events-none"
-          style={{
+              className="fixed inset-0 z-40 pointer-events-none"
+              style={{
             background: 'radial-gradient(ellipse 450px 650px at center, transparent 0%, transparent 38%, rgba(59,130,246,0.05) 55%)',
             opacity: 0,
             display: phoneState === 'immersive' ? 'block' : 'none'
-          }}
-        />
-      </>
+              }}
+            />
+          </>
 
       {/* Hero Section */}
       <HeroSection />
@@ -111,12 +111,12 @@ const HomeContent: React.FC = () => {
       {/* Main Portfolio Content */}
       <div className="relative">
         {/* Visual Phone Frame (3D animations only) */}
-        <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
           <PhoneFrameVisual 
             phoneState={phoneState} 
             progress={progress}
           />
-        </div>
+            </div>
 
         {/* Independent Phone Content Layer (scrollable content) */}
         <PhoneContentLayer />
